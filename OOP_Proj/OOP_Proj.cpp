@@ -231,15 +231,15 @@ void DoInitializePriceList(void)
             double price;
             double discRate;
 
-            getInput("Enter item code for item " + to_string(i + 1), code);
-            getInput("Enter item description for item " + to_string(i + 1), desc);
-            getInput("Enter item price for item " + to_string(i + 1), price);
-            getInput("Enter item discount rate for item " + to_string(i + 1), discRate);
+            getInput("Enter item code for item " + to_string(i + 1) + " ", code);
+            getInput("Enter item description for item " + to_string(i + 1) + " ", desc);
+            getInput("Enter item price for item " + to_string(i + 1) + " ", price);
+            getInput("Enter item discount rate for item " + to_string(i + 1) + " ", discRate);
            
             itemList[i] = CItem(code, desc, price, discRate);
 
             cout << "Item added" << endl;
-            if (!again("Add another item (Y/N)?"))
+            if (!again("Add another item (Y/N)? "))
                 return;
             
 
@@ -248,29 +248,11 @@ void DoInitializePriceList(void)
     else
     {
         // coninuing from closest 0 point
-
-        for (int i = 0; i < MAX_ITEMS; i++)
+        while (1)
         {
-            if (itemList[i].GetCode() == 0)
-            {
-                int code;
-                string desc;
-                double price;
-                double discRate;
-
-                getInput("Enter item code for item " + to_string(i + 1), code);
-                getInput("Enter item description for item " + to_string(i + 1), desc);
-                getInput("Enter item price for item " + to_string(i + 1), price);
-                getInput("Enter item discount rate for item " + to_string(i + 1), discRate);
-
-                itemList[i] = CItem(code, desc, price, discRate);
-
-                cout << "Item added" << endl;
-                if (!again("Add another item (Y/N)?"))
-                    return;
-
-            }
-
+            DoAddItemToList();
+            if (!again("Add another item (Y/N)?"))
+                return;
         }
 
     }
@@ -329,10 +311,10 @@ void DoAddItemToList(void) {
 
 
 
-            getInput("Enter item code for item " + to_string(i + 1), code);
-            getInput("Enter item description for item " + to_string(i + 1), desc);
-            getInput("Enter item price for item " + to_string(i + 1), price);
-            getInput("Enter item discount rate for item " + to_string(i + 1), discRate);
+            getInput("Enter item code for item " + to_string(i + 1) + " ", code);
+            getInput("Enter item description for item " + to_string(i + 1) + " ", desc);
+            getInput("Enter item price for item " + to_string(i + 1) + " ", price);
+            getInput("Enter item discount rate for item " + to_string(i + 1) + " ", discRate);
 
             itemList[i] = CItem(code, desc, price, discRate);
             cout << "New item added." << endl;
