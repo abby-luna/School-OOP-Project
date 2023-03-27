@@ -9,7 +9,7 @@
 using namespace std;
 
 const int MAX_ITEMS = 25;
-const int MAX_USERS = 5;
+const int MAX_USERS = 6;
 
 CItem itemList[MAX_ITEMS] = { CItem() };
 CUser userList[MAX_USERS] = { CUser() };;
@@ -46,6 +46,7 @@ int getMaxStr();
 string formatString(string str);
 void displayNums(int priv);
 
+
 // overloaded input functions (By Scott and Abby)
 template<typename arbitrary>
 void getInput(string prompt, arbitrary& input) {
@@ -56,6 +57,15 @@ void getInput(string prompt, arbitrary& input) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
+}
+
+bool again(string prompt)
+{
+    char a;
+    getInput(prompt, a);
+    if (a == 'y' || a == 'Y')
+        return true;
+    return false;
 }
 
 int main()
@@ -206,11 +216,8 @@ void DoQuit()
 
 void DoInitializePriceList(void)
 {
-    char res;
 
-    getInput( "Do you wish to start over (Y or N)? ", res);
-
-    if (res == 'Y' || res == 'y')
+    if (again("Do you wish to start over (Y/N)? "))
     {
          // reset array
         for (int i = 0; i < MAX_ITEMS; i++)
@@ -231,15 +238,10 @@ void DoInitializePriceList(void)
            
             itemList[i] = CItem(code, desc, price, discRate);
 
-            cout << "Item added";
-
-            char another;
-            getInput("Add another item (Y oder N)?", another);
-
-            if (another == 'n' || another == 'N')
-            {
+            cout << "Item added" << endl;
+            if (!again("Add another item (Y/N)?"))
                 return;
-            }
+            
 
         }
     }
@@ -263,15 +265,9 @@ void DoInitializePriceList(void)
 
                 itemList[i] = CItem(code, desc, price, discRate);
 
-                cout << "Item added";
-
-                char another;
-                getInput("Add another item (Y oder N)?", another);
-
-                if (another == 'n' || another == 'N')
-                {
+                cout << "Item added" << endl;
+                if (!again("Add another item (Y/N)?"))
                     return;
-                }
 
             }
 
@@ -409,13 +405,9 @@ void DoOrderCost(void) {
         if (itemList[i].HasCode(code))
         {
             int quantity;
-            char discount;
-
             getInput("What quantity is required: ", quantity);
-            getInput("Are they eligible for a discount: ", discount);
 
-
-            if (discount == 'Y' || discount == 'y')
+            if (again("Are they eligible for a discount (Y/N): "))
             {
                 cout << "Price is " << itemList[i].GetDiscount() * quantity << endl;
                 return;
@@ -505,7 +497,7 @@ void DoAddUser(void)
 
     getInput("Enter a username: ", name);
     getInput("Enter a password: ", password);
-    getInput("Wnter a usertype (A or M): ", t);
+    getInput("Enter a usertype (A or M): ", t);
 
 
     for (int i = 0; i < MAX_USERS; i++)
@@ -598,7 +590,7 @@ void fillUserList()
         getline(ss, passwordStr, ',');
         getline(ss, typeStr, ',');
 
-        std::cout << "LOADED USER " << nameStr << " PASS " << passwordStr << endl;
+        //std::cout << "LOADED USER " << nameStr << " PASS " << passwordStr << endl;
 
         char type = typeStr[0];
         userList[index] = CUser(nameStr, type, passwordStr);
