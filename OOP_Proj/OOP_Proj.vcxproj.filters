@@ -24,12 +24,18 @@
     <ClCompile Include="CUser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PrettyPrint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CUser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PrettyPrint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

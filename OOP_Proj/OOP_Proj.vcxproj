@@ -130,10 +130,12 @@
     <ClCompile Include="CItem.cpp" />
     <ClCompile Include="CUser.cpp" />
     <ClCompile Include="OOP_Proj.cpp" />
+    <ClCompile Include="PrettyPrint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CItem.h" />
     <ClInclude Include="CUser.h" />
+    <ClInclude Include="PrettyPrint.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="userFile.csv" />

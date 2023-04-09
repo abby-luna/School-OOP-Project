@@ -1,5 +1,6 @@
 #include "CItem.h"
 #include "CUser.h"
+#include "PrettyPrint.h"
 
 #include <fstream>
 #include <sstream>
@@ -16,7 +17,6 @@ CUser userList[MAX_USERS] = { CUser() };;
 
 int size = 0;
 
-// 9
 
 // menu options
 void DoInitializePriceList(void);
@@ -43,7 +43,6 @@ void fillUserList();
 void fillItemList();
 int checkPrivlageLevel(char priv);
 int getMaxStr();
-string formatString(string str);
 void displayNums(int priv);
 
 
@@ -263,16 +262,9 @@ void DoDisplayFullPriceList(void)
     //display a suitable item table header 
     //display all of the items in the item list
     int cellSize = getMaxStr() + 2;
+    PrettyPrint printer = PrettyPrint(cellSize);
+    printer.initialize();
 
-    cout << '|' << setfill('-') << setw(cellSize) << "" << "|"<< setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << '|' << endl;
-    cout << "|" << formatString( "Code") << "|";
-    cout << formatString("Description") << "|";
-    cout << formatString("Price") <<  "|";
-    cout << formatString("Rate") << "|\n";
-    cout << '|' << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << '|' << endl;
-
-
-    
     for (int i = 0; i < MAX_ITEMS; i++) {
 
 
@@ -281,21 +273,7 @@ void DoDisplayFullPriceList(void)
             break;
         }
         CItem item = itemList[i];
-
-
-        stringstream one;
-        stringstream two;
-
-        one << fixed << setprecision(2) << item.GetPrice();
-        two << fixed << setprecision(2) << item.GetDiscountRate();
-
-
-        cout << "|" << formatString(to_string(item.GetCode())) << "|";
-        cout << formatString(item.GetDescription()) << "|";
-        cout << formatString(one.str()) << "|";
-        cout << formatString(two.str()) << "|\n";
-        cout << '|' << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << '|' << endl;
-        
+        printer.nextLine(item);
     }
    
 }
@@ -311,10 +289,10 @@ void DoAddItemToList(void) {
 
 
 
-            getInput("Enter item code for item " + to_string(i + 1) + " ", code);
-            getInput("Enter item description for item " + to_string(i + 1) + " ", desc);
-            getInput("Enter item price for item " + to_string(i + 1) + " ", price);
-            getInput("Enter item discount rate for item " + to_string(i + 1) + " ", discRate);
+            getInput("Enter item code for item ", code);
+            getInput("Enter item description for item ", desc);
+            getInput("Enter item price for item ", price);
+            getInput("Enter item discount rate for item ", discRate);
 
             itemList[i] = CItem(code, desc, price, discRate);
             cout << "New item added." << endl;
@@ -409,15 +387,8 @@ void DoTotalInvoice(void) {
     //display a suitable item table header 
     //display all of the items in the item list
     int cellSize = getMaxStr() + 2;
-
-    cout << '|' << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << '|' << endl;
-    cout << "|" << formatString("Code") << "|";
-    cout << formatString("Description") << "|";
-    cout << formatString("Price") << "|";
-    cout << formatString("Rate") << "|\n";
-    cout << '|' << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << '|' << endl;
-
-
+    PrettyPrint printer = PrettyPrint(cellSize);
+    printer.initialize();
 
     for (int i = 0; i < MAX_ITEMS; i++) {
         
@@ -427,22 +398,8 @@ void DoTotalInvoice(void) {
             break;
         }
         CItem item = itemList[i];
+        printer.nextLine(item);
         totalCost += item.GetPrice();
-
-
-        stringstream one;
-        stringstream two;
-
-        one << fixed << setprecision(2) << item.GetPrice();
-        two << fixed << setprecision(2) << item.GetDiscountRate();
-
-
-        cout << "|" << formatString(to_string(item.GetCode())) << "|";
-        cout << formatString(item.GetDescription()) << "|";
-        cout << formatString(one.str()) << "|";
-        cout << formatString(two.str()) << "|\n";
-        cout << '|' << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << "|" << setfill('-') << setw(cellSize) << "" << '|' << endl;
-
     }
     cout << "Total invoice: " << totalCost << endl;
 }
@@ -630,15 +587,7 @@ int getMaxStr()
 
 }
 
-string formatString(string str)
-{
 
-
-    int d = getMaxStr() - str.length() + 2;
-    int pad = d / 2;
-    int pad2 = d - pad;
-    return string(pad, ' ') + str + string(pad2, ' ');
-}
 void displayNums(int priv)
 {
     if (priv > 0)
