@@ -1,6 +1,6 @@
 #include "CUser.h"
-
 #include <iostream>
+
 using namespace std;
 CUser::CUser()
 {

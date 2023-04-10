@@ -5,6 +5,9 @@
 #include <sstream>
 #include <iomanip>
 
+#define RESET   "\033[0m"
+#define CYAN    "\033[36m"
+
 using namespace std;
 
 /*
@@ -35,10 +38,10 @@ void PrettyPrint::initialize()
 	// lets get the first line of the table out (my least favorite!)
 
     cout << '|' << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << '|' << endl;
-    cout << "|" << formatString("Code") << "|";
-    cout << formatString("Description") << "|";
-    cout << formatString("Price") << "|";
-    cout << formatString("Rate") << "|" << endl;
+    cout << "|" << CYAN << formatString("Code") << RESET << "|";
+    cout << CYAN << formatString("Description") << RESET << "|";
+    cout << CYAN << formatString("Price") << RESET << "|";
+    cout << CYAN << formatString("Rate") << RESET << "|" << endl;
     cout << '|' << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << '|' << endl;
 
 

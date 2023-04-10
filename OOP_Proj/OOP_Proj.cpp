@@ -6,6 +6,12 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include <conio.h>
+
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+
 
 using namespace std;
 
@@ -48,6 +54,33 @@ void displayNums(int priv);
 bool verifyCodeExists(int code);
 int verifyUsernameExists(string uname);
 
+string getPassword() 
+{
+    cout << "Enter a password: ";
+    string s = "";
+    for (int i = 0; i < 100; i++) 
+    {
+        char c = _getch();
+
+        if (c == 13 || c == '\n')
+        {
+            cout << endl;
+            return s;
+        }
+        else if (c == '\b' && s.length() > 0)
+        {
+            s.pop_back();
+            cout << "\b \b";
+        }
+        else if(c != '\b')
+        {
+            cout << '*';
+            s += c;
+        }
+
+
+    }
+}
 
 
 // overloaded input functions (By Scott and Abby)
@@ -72,7 +105,7 @@ void getInput(string prompt, T& input)
 
         if (!(ss >> input))
         {
-            cout << "Invalid input. Try again: ";
+            cout << RED << "Invalid input. Try again: " << RESET;
             ss = stringstream();
         }
         else
@@ -104,7 +137,7 @@ char login()
     for (int i = 0; i < 3; i++)
     {
         if(i>0)
-            cout << "Incorrect username or password. Try again" << endl;
+            cout << RED << "Incorrect username or password. Try again" << RESET << endl;
 
 
         cout << "Enter a username: ";
@@ -113,24 +146,21 @@ char login()
         cin.clear(); 
         cin.ignore();
 
-        cout << "Enter a password: ";
-        cin >> upass;
+        upass = getPassword();
 
-        cin.clear();
-        cin.ignore();
 
         for (int i = 0; i < MAX_USERS; i++)
         {
             if (userList[i].auth(uname, upass))
             {
-                cout << "Logged in as " << userList[i].getName() << endl;
+                cout << GREEN << "Logged in as " << userList[i].getName() << RESET << endl;
                 return userList[i].getType();
             }
         }
 
 
     }
-    cout << "Too many failed password attempts. No access granted" << endl;
+    cout << RED << "Too many failed password attempts. No access granted" << RESET << endl;
 }
 
 int main()
@@ -156,13 +186,13 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 2:
             if (checkPrivlageLevel(userType) > 0)
                 DoDisplayFullPriceList();
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 3:
             if (checkPrivlageLevel(userType) > 0)
@@ -171,7 +201,7 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 4:
             if (checkPrivlageLevel(userType) > 0)
@@ -180,7 +210,7 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 5:
             if (checkPrivlageLevel(userType) > 0)
@@ -189,25 +219,25 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 6:
             if (checkPrivlageLevel(userType) > 0)
                 DoDisplayItem();
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 7:
             if (checkPrivlageLevel(userType) > 0)
                 DoOrderCost();
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 8:
             if (checkPrivlageLevel(userType) > 0)
                 DoTotalInvoice();
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 9:
             if (checkPrivlageLevel(userType) > 0)
@@ -217,19 +247,19 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 10:
             if (checkPrivlageLevel(userType) > 1)
                 DoAddUser();
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 11:
             if (checkPrivlageLevel(userType) > 1)
                 DoEditUser();
             else
-                cout << "you dont have access to this function" << endl;
+                cout << RED << "you dont have access to this function" << RESET << endl;
             break;
         case 0:
             DoQuit();
@@ -244,7 +274,7 @@ int main()
 
 void DoQuit()
 {
-    cout << "GoodBye" << endl;
+    cout << "Goodbye" << endl;
     cout << "Have a nice day :D" << endl;
 }
 
@@ -269,7 +299,7 @@ void DoInitializePriceList(void)
 
             while (verifyCodeExists(code) || code <=0 )
             {
-                cout << "Item code must be unique and greater than zero" << endl;
+                cout << RED << "Item code must be unique and greater than zero" << RESET<< endl;
                 getInput("Enter item code for item ", code);
             }
             
@@ -280,7 +310,7 @@ void DoInitializePriceList(void)
            
             itemList[i] = CItem(code, desc, price, discRate);
 
-            cout << "Item added" << endl;
+            cout << GREEN << "Item added" << RESET << endl;
             if (!again("Add another item (Y/N)? "))
                 return;
             
@@ -335,7 +365,7 @@ void DoAddItemToList(void) {
 
             while (verifyCodeExists(code) || code <= 0)
             {
-                cout << "Item code must be unique and greater than zero" << endl;
+                cout << RED<< "Item code must be unique and greater than zero" << RESET << endl;
                 getInput("Enter item code for item ", code);
             }
             getInput("Enter item description for item ", desc);
@@ -343,13 +373,13 @@ void DoAddItemToList(void) {
             getInput("Enter item discount rate for item ", discRate);
 
             itemList[i] = CItem(code, desc, price, discRate);
-            cout << "New item added." << endl;
+            cout << GREEN << "New item added." << RESET << endl;
 
 
             return;
         }
     }
-    cout << "Item list is full." << endl;
+    cout << RED << "Item list is full." << RESET << endl;
 }
 
 void DoSetItemPrice(void) {
@@ -363,11 +393,13 @@ void DoSetItemPrice(void) {
             double p;
             getInput("Enter new price for the item: ", p);
             itemList[i].SetPrice(p);
+            cout << GREEN << "Success." << RESET << endl;
+
             return;
         }
     }
 
-    cout << "Item not found." << endl;
+    cout << RED << "Item not found." << RESET << endl;
 
 }
 
@@ -381,11 +413,13 @@ void DoSetItemDiscountRate(void) {
             double p;
             getInput("Enter new discount reate for item: ", p);
             itemList[i].SetDiscountRate(p);
+            cout << GREEN << "Success." << RESET << endl;
+
             return;
         }
     }
 
-    cout << "Item not found." << endl;
+    cout << RED << "Item not found." << RESET << endl;
 }
 
 void DoDisplayItem(void) {
@@ -405,7 +439,7 @@ void DoDisplayItem(void) {
             
     }
 
-    cout << "Item not found." << endl;
+    cout << RED << "Item not found." << RESET << endl;
 }
 
 void DoOrderCost(void) {
@@ -430,7 +464,7 @@ void DoOrderCost(void) {
 
     }
 
-    cout << "Item not found." << endl;
+    cout << RED << "Item not found." << RESET << endl;
 
 }
 
@@ -475,7 +509,7 @@ void DoRemoveItemFromList(void) {
     }
 
     if (!found)
-        cout << "Item not found." << endl;
+        cout << RED << "Item not found." << RESET << endl;
 
 }
 // manager
@@ -491,19 +525,19 @@ void DoAddUser(void)
             if (verifyUsernameExists(userList[i].getName()) > 1)
             {
                 userList[i] = CUser();
-                cout << "Failed, username in use, please choose a unique username" << endl;
+                cout << RED << "Failed, username in use, please choose a unique username" << RESET << endl;
                 return;
             }
 
             SaveUsersToFile();
-            cout << "Success" << endl;
+            cout << GREEN << "Success" << RESET << endl;
             return;
 
         }
 
     }
 
-    cout << "Max users reached" << endl;
+    cout << RED << "Max users reached" << RESET << endl;
 }
 void DoEditUser(void)
 {
@@ -525,13 +559,13 @@ void DoEditUser(void)
 
             userList[i].setPass(newPassword);
 
-            cout << "Password Updated Successfully" << endl;
+            cout << GREEN << "Password Updated Successfully" << RESET << endl;
             SaveUsersToFile();
             return;
         }
 
     }
-    cout << "Password Updated Unsuccessfully: " << name << " does not exist" << endl;
+    cout << RED << "Password Update Unsuccessful: " << name << " does not exist" << RESET<< endl;
 
 
 }
