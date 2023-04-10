@@ -45,18 +45,47 @@ int checkPrivlageLevel(char priv);
 int getMaxStr();
 void displayNums(int priv);
 
+bool verifyCodeExists(int code);
+int verifyUsernameExists(string uname);
+
+
 
 // overloaded input functions (By Scott and Abby)
-template<typename arbitrary>
-void getInput(string prompt, arbitrary& input) {
+template<typename T>
+void getInput(string prompt, T& input) 
+{
     cout << prompt;
-    while (!(cin >> input)) 
+
+    stringstream ss;
+    while (true)
     {
-        cout << "Invalid input. Try again: ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        string l;
+        getline(cin, l);
+
+   
+        ss << l;
+        if constexpr (is_same_v<T, string>)
+        {
+            input = l;
+            return;
+        }
+
+        if (!(ss >> input))
+        {
+            cout << "Invalid input. Try again: ";
+            ss = stringstream();
+        }
+        else
+        {
+            return;
+        }
+
+        
     }
+
+   
 }
+
 
 bool again(string prompt)
 {
@@ -67,44 +96,50 @@ bool again(string prompt)
     return false;
 }
 
+char login()
+{
+    string uname;
+    string upass;
+    // give 3 attempts
+    for (int i = 0; i < 3; i++)
+    {
+        if(i>0)
+            cout << "Incorrect username or password. Try again" << endl;
+
+
+        cout << "Enter a username: ";
+        cin >> uname;
+
+        cin.clear(); 
+        cin.ignore();
+
+        cout << "Enter a password: ";
+        cin >> upass;
+
+        cin.clear();
+        cin.ignore();
+
+        for (int i = 0; i < MAX_USERS; i++)
+        {
+            if (userList[i].auth(uname, upass))
+            {
+                cout << "Logged in as " << userList[i].getName() << endl;
+                return userList[i].getType();
+            }
+        }
+
+
+    }
+    cout << "Too many failed password attempts. No access granted" << endl;
+}
+
 int main()
 {
 
     fillUserList();
     fillItemList();
 
-
-    string uname;
-    string pass;
-    // n for no permissions
-    char userType = 'N';
-    bool found = false;
-    //cout << "Please enter your username: ";
-    //cin >> uname;
-
-    getInput("Please enter your username: ", uname);
-    for (int i = 0; i < MAX_USERS; i++)
-    {
-        if (userList[i].getName() == uname)
-        {
-
-
-            getInput("Please enter your password: ", pass);
-            if (userList[i].auth(pass))
-            {
-                userType = userList[i].getType();
-                std::cout << "Logged in as " << uname << endl;
-            }
-            else
-            {
-                std::cout << "Incorrect password: No access granted" << endl;
-            }
-
-
-
-
-        }
-    }
+    char userType = login();
 
     int choice;
     displayNums(checkPrivlageLevel(userType));
@@ -121,13 +156,13 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 2:
             if (checkPrivlageLevel(userType) > 0)
                 DoDisplayFullPriceList();
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 3:
             if (checkPrivlageLevel(userType) > 0)
@@ -136,7 +171,7 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 4:
             if (checkPrivlageLevel(userType) > 0)
@@ -145,7 +180,7 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 5:
             if (checkPrivlageLevel(userType) > 0)
@@ -154,25 +189,25 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 6:
             if (checkPrivlageLevel(userType) > 0)
                 DoDisplayItem();
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 7:
             if (checkPrivlageLevel(userType) > 0)
                 DoOrderCost();
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 8:
             if (checkPrivlageLevel(userType) > 0)
                 DoTotalInvoice();
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 9:
             if (checkPrivlageLevel(userType) > 0)
@@ -182,25 +217,25 @@ int main()
                 SaveItemsToFile();
             }
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 10:
             if (checkPrivlageLevel(userType) > 1)
                 DoAddUser();
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 11:
             if (checkPrivlageLevel(userType) > 1)
                 DoEditUser();
             else
-                cout << "you dont have access to this function\n";
+                cout << "you dont have access to this function" << endl;
             break;
         case 0:
             DoQuit();
             break;
         default:
-            std::cout << "Invalid choice. Please select from these options." << std::endl;
+            cout << "Invalid choice. Please select from these options." << endl;
             displayNums(checkPrivlageLevel(userType));
    
         }
@@ -230,10 +265,18 @@ void DoInitializePriceList(void)
             double price;
             double discRate;
 
-            getInput("Enter item code for item " + to_string(i + 1) + " ", code);
-            getInput("Enter item description for item " + to_string(i + 1) + " ", desc);
-            getInput("Enter item price for item " + to_string(i + 1) + " ", price);
-            getInput("Enter item discount rate for item " + to_string(i + 1) + " ", discRate);
+            getInput("Enter item code for item ", code);
+
+            while (verifyCodeExists(code) || code <=0 )
+            {
+                cout << "Item code must be unique and greater than zero" << endl;
+                getInput("Enter item code for item ", code);
+            }
+            
+            
+            getInput("Enter item description for item ", desc);
+            getInput("Enter item price for item ", price);
+            getInput("Enter item discount rate for item ", discRate);
            
             itemList[i] = CItem(code, desc, price, discRate);
 
@@ -288,8 +331,13 @@ void DoAddItemToList(void) {
             double discRate;
 
 
-
             getInput("Enter item code for item ", code);
+
+            while (verifyCodeExists(code) || code <= 0)
+            {
+                cout << "Item code must be unique and greater than zero" << endl;
+                getInput("Enter item code for item ", code);
+            }
             getInput("Enter item description for item ", desc);
             getInput("Enter item price for item ", price);
             getInput("Enter item discount rate for item ", discRate);
@@ -344,10 +392,14 @@ void DoDisplayItem(void) {
     int code;
     getInput("Enter item code for item: ", code);
 
+    int cellSize = getMaxStr() + 2;
+    PrettyPrint printer = PrettyPrint(cellSize);
+    printer.initialize();
+
     for (int i = 0; i < MAX_ITEMS; i++) {
         if (itemList[i].HasCode(code))
         {
-            itemList[i].Display();
+            printer.nextLine(itemList[i]); //  .Display();
             return;
         }
             
@@ -430,29 +482,28 @@ void DoRemoveItemFromList(void) {
 void DoAddUser(void)
 {
 
-    string name;
-    string password;
-    char t;
-
-    getInput("Enter a username: ", name);
-    getInput("Enter a password: ", password);
-    getInput("Enter a usertype (A or M): ", t);
-
-
     for (int i = 0; i < MAX_USERS; i++)
     {
         if (userList[i].getType() == 'N')
         {
-            userList[i] = CUser(name, t, password);
+            cin >> userList[i];
+
+            if (verifyUsernameExists(userList[i].getName()) > 1)
+            {
+                userList[i] = CUser();
+                cout << "Failed, username in use, please choose a unique username" << endl;
+                return;
+            }
+
             SaveUsersToFile();
-            cout << "Success\n";
+            cout << "Success" << endl;
             return;
 
         }
 
     }
 
-    cout << "Max users reached\n";
+    cout << "Max users reached" << endl;
 }
 void DoEditUser(void)
 {
@@ -468,15 +519,19 @@ void DoEditUser(void)
             string newPassword;
             cout << "enter the new password: ";
             cin >> newPassword;
+
+            cin.clear();
+            cin.ignore();
+
             userList[i].setPass(newPassword);
 
-            cout << "Password Updated Successfully\n";
+            cout << "Password Updated Successfully" << endl;
             SaveUsersToFile();
             return;
         }
 
     }
-    cout << "Password Updated Unsuccessfully\n";
+    cout << "Password Updated Unsuccessfully: " << name << " does not exist" << endl;
 
 
 }
@@ -609,6 +664,28 @@ void displayNums(int priv)
     }
     std::cout << "0. Exit" << std::endl;
     std::cout << "Enter choice: ";
+}
+
+bool verifyCodeExists(int code)
+{
+    for(int i = 0; i < MAX_ITEMS; i++)
+    {
+        CItem ele = itemList[i];
+        if (ele.GetCode() == code)
+            return true;
+    }
+    return false;
+}
+int verifyUsernameExists(string uname)
+{
+    int occurences = 0;
+    for (int i = 0; i < MAX_USERS; i++)
+    {
+        CUser ele = userList[i];
+        if (ele.getName() == uname)
+            occurences++;
+    }
+    return occurences;
 }
 // end of util 
 

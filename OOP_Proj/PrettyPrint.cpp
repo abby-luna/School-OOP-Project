@@ -38,7 +38,7 @@ void PrettyPrint::initialize()
     cout << "|" << formatString("Code") << "|";
     cout << formatString("Description") << "|";
     cout << formatString("Price") << "|";
-    cout << formatString("Rate") << "|\n";
+    cout << formatString("Rate") << "|" << endl;
     cout << '|' << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << '|' << endl;
 
 
@@ -58,6 +58,6 @@ void PrettyPrint::nextLine(CItem i)
     cout << "|" << formatString(to_string(i.GetCode())) << "|";
     cout << formatString(i.GetDescription()) << "|";
     cout << formatString(one.str()) << "|";
-    cout << formatString(two.str()) << "|\n";
+    cout << formatString(two.str()) << "|" << endl;
     cout << '|' << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << '|' << endl;
 }
