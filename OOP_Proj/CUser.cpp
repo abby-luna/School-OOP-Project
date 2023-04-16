@@ -56,8 +56,18 @@ istream& operator>>(istream& input, CUser& user) {
 
 	cout << "Enter a username: ";
 	cin >> uname;
+
+	cin.clear();
+	cin.ignore();
+
+
 	cout << "Enter a password: ";
 	cin >> upass;
+
+	cin.clear();
+	cin.ignore();
+
+
 	cout << "Enter a userype (A or M): ";
 	cin >> userType;
 
