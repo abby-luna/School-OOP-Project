@@ -54,80 +54,12 @@ void displayNums(int priv);
 bool verifyCodeExists(int code);
 int verifyUsernameExists(string uname);
 
-string getPassword() 
-{
-    cout << "Enter a password: ";
-    string s = "";
-    for (int i = 0; i < 100; i++) 
-    {
-        char c = _getch();
+string getPassword();
 
-        if (c == 13 || c == '\n')
-        {
-            cout << endl;
-            return s;
-        }
-        else if (c == '\b' && s.length() > 0)
-        {
-            s.pop_back();
-            cout << "\b \b";
-        }
-        else if(c != '\b')
-        {
-            cout << '*';
-            s += c;
-        }
-
-
-    }
-}
-
-
-// overloaded input functions (By Scott and Abby)
 template<typename T>
-void getInput(string prompt, T& input) 
-{
-    cout << prompt;
+void getInput(string prompt, T& input);
 
-    stringstream ss;
-    while (true)
-    {
-        string l;
-        getline(cin, l);
-
-   
-        ss << l;
-        if constexpr (is_same_v<T, string>)
-        {
-            input = l;
-            return;
-        }
-
-        if (!(ss >> input))
-        {
-            cout << RED << "Invalid input. Try again: " << RESET;
-            ss = stringstream();
-        }
-        else
-        {
-            return;
-        }
-
-        
-    }
-
-   
-}
-
-
-bool again(string prompt)
-{
-    char a;
-    getInput(prompt, a);
-    if (a == 'y' || a == 'Y')
-        return true;
-    return false;
-}
+bool again(string prompt);
 
 char login()
 {
@@ -161,6 +93,7 @@ char login()
 
     }
     cout << RED << "Too many failed password attempts. No access granted" << RESET << endl;
+    return 'N';
 }
 
 int main()
@@ -288,7 +221,12 @@ void DoInitializePriceList(void)
         {
             itemList[i] = CItem();
         }
-        for (int i = 0; i < MAX_ITEMS; i++)
+       
+    }
+
+    for (int i = 0; i < MAX_ITEMS; i++)
+    {
+        if (itemList[i].GetCode() == 0)
         {
             int code;
             string desc;
@@ -297,37 +235,35 @@ void DoInitializePriceList(void)
 
             getInput("Enter item code for item ", code);
 
-            while (verifyCodeExists(code) || code <=0 )
+            while (verifyCodeExists(code) || code <= 0)
             {
-                cout << RED << "Item code must be unique and greater than zero" << RESET<< endl;
+                cout << RED << "Item code must be unique and greater than zero" << RESET << endl;
                 getInput("Enter item code for item ", code);
             }
-            
-            
+
+
             getInput("Enter item description for item ", desc);
             getInput("Enter item price for item ", price);
+
             getInput("Enter item discount rate for item ", discRate);
-           
+            while (discRate < 0 || discRate >= 1)
+            {
+                cout << RED << "Discount rate must be between 0 and .99" << RESET << endl;
+                getInput("Enter item discount rate for item ", discRate);
+            }
+
             itemList[i] = CItem(code, desc, price, discRate);
 
             cout << GREEN << "Item added" << RESET << endl;
             if (!again("Add another item (Y/N)? "))
                 return;
-            
-
-        }
-    }
-    else
-    {
-        // coninuing from closest 0 point
-        while (1)
-        {
-            DoAddItemToList();
-            if (!again("Add another item (Y/N)?"))
-                return;
         }
 
     }
+    cout << RED << "Item list is full." << RESET << endl;
+
+
+
 }
 
 void DoDisplayFullPriceList(void)
@@ -372,6 +308,11 @@ void DoAddItemToList(void) {
             getInput("Enter item price for item ", price);
             getInput("Enter item discount rate for item ", discRate);
 
+            while (discRate < 0 || discRate >= 1)
+            {
+                cout << RED << "Discount rate must be between 0 and .99" << RESET << endl;
+                getInput("Enter item discount rate for item ", discRate);
+            }
             itemList[i] = CItem(code, desc, price, discRate);
             cout << GREEN << "New item added." << RESET << endl;
 
@@ -426,13 +367,15 @@ void DoDisplayItem(void) {
     int code;
     getInput("Enter item code for item: ", code);
 
-    int cellSize = getMaxStr() + 2;
-    PrettyPrint printer = PrettyPrint(cellSize);
-    printer.initialize();
+
 
     for (int i = 0; i < MAX_ITEMS; i++) {
         if (itemList[i].HasCode(code))
         {
+
+            int cellSize = getMaxStr() + 2;
+            PrettyPrint printer = PrettyPrint(cellSize);
+            printer.initialize();
             printer.nextLine(itemList[i]); //  .Display();
             return;
         }
@@ -451,14 +394,16 @@ void DoOrderCost(void) {
         if (itemList[i].HasCode(code))
         {
             int quantity;
+            double price;
             getInput("What quantity is required: ", quantity);
 
+            price = itemList[i].GetPrice() * quantity;
             if (again("Are they eligible for a discount (Y/N): "))
             {
-                cout << "Price is " << itemList[i].GetDiscount() * quantity << endl;
+                cout << "Price is " << price - (itemList[i].GetDiscount() * quantity) << endl;
                 return;
             }
-            cout << "Price is " << itemList[i].GetPrice() * quantity << endl;
+            cout << "Price is " << price << endl;
             return;
         }
 
@@ -496,7 +441,10 @@ void DoRemoveItemFromList(void) {
     bool found = false;
     for (int i = 0; i < MAX_ITEMS; i++) {
         if (itemList[i].HasCode(code))
+        {
             found = true;
+
+        }
         else
         {
             if (!found)
@@ -510,6 +458,16 @@ void DoRemoveItemFromList(void) {
 
     if (!found)
         cout << RED << "Item not found." << RESET << endl;
+    else
+    {
+        // this is for an edge case where 
+        // we have a full list of items
+        // this solves an issue where the final item is written twice
+        // increases code integrety quite a bit
+        itemList[MAX_ITEMS - 1] = CItem();
+        cout << GREEN << "Item removed." << RESET << endl;
+    }
+
 
 }
 // manager
@@ -721,6 +679,79 @@ int verifyUsernameExists(string uname)
     }
     return occurences;
 }
+
+string getPassword()
+{
+    cout << "Enter a password: ";
+    string s = "";
+    for (int i = 0; i < 100; i++)
+    {
+        char c = _getch();
+
+        if (c == 13 || c == '\n')
+        {
+            cout << endl;
+            return s;
+        }
+        else if (c == '\b' && s.length() > 0)
+        {
+            s.pop_back();
+            cout << "\b \b";
+        }
+        else if (c != '\b')
+        {
+            cout << '*';
+            s += c;
+        }
+
+
+    }
+}
+
+bool again(string prompt)
+{
+    char a;
+    getInput(prompt, a);
+    if (a == 'y' || a == 'Y')
+        return true;
+    return false;
+}
+
+template<typename T>
+void getInput(string prompt, T& input)
+{
+    cout << prompt;
+
+    stringstream ss;
+    while (true)
+    {
+        string l;
+        getline(cin, l);
+
+
+        ss << l;
+        if constexpr (is_same_v<T, string>)
+        {
+            input = l;
+            return;
+        }
+
+        if (!(ss >> input))
+        {
+            cout << RED << "Invalid input. Try again: " << RESET;
+            ss = stringstream();
+        }
+        else
+        {
+            return;
+        }
+
+
+    }
+
+
+}
+
 // end of util 
 
 
