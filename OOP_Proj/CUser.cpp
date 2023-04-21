@@ -41,7 +41,8 @@ void CUser::setPass(string newPass)
 	m_password = newPass;
 }
 
-istream& operator>>(istream& input, CUser& user) {
+istream& operator>>(istream& input, CUser& user) 
+{
 
 	// User has some unique requirements (hence its own input method)
 	// we factored in lots of things here, most noteably padding .. 

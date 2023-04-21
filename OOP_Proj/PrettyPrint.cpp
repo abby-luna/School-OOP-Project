@@ -64,3 +64,31 @@ void PrettyPrint::nextLine(CItem i)
     cout << formatString(two.str()) << "|" << endl;
     cout << '|' << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << '|' << endl;
 }
+
+string PrettyPrint::initializeCart()
+{
+
+    stringstream line;
+    line << '|' << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << "\n";
+    line << "|" << CYAN << formatString("Description") << RESET << "|";
+    line << CYAN << formatString("Quantity") << RESET << "|";
+    line << CYAN << formatString("Price") << RESET << "|" << "\n";
+    line << '|' << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << "\n";
+
+    return line.str();
+}
+string PrettyPrint::cartItem(string name, int quantity, double price)
+{
+    stringstream one;
+    stringstream line;
+
+    one << fixed << setprecision(2) << price;
+
+
+    line << "|" << formatString(name) << "|";
+    line << formatString(to_string(quantity)) << "|";
+    line << formatString(one.str()) << "|" << endl;
+    line << '|' << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" << setfill('-') << setw(p_cellsize) << "" << "|" <<  "\n";
+    
+    return line.str();
+}

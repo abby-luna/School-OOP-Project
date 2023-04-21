@@ -387,29 +387,54 @@ void DoDisplayItem(void) {
 
 void DoOrderCost(void) {
 
-    int code;
-    getInput("Enter item code for item: ", code);
 
-    for (int i = 0; i < MAX_ITEMS; i++) {
-        if (itemList[i].HasCode(code))
-        {
-            int quantity;
-            double price;
-            getInput("What quantity is required: ", quantity);
+    double runningTotal = 0;
 
-            price = itemList[i].GetPrice() * quantity;
-            if (again("Are they eligible for a discount (Y/N): "))
+    int cellSize = getMaxStr() + 2;
+    PrettyPrint printer = PrettyPrint(cellSize);
+    string output = printer.initializeCart();
+
+
+    do
+    {
+        int code;
+        bool found = false;
+        getInput("Enter item code for item: ", code);
+
+        for (int i = 0; i < MAX_ITEMS; i++) {
+            if (itemList[i].HasCode(code))
             {
-                cout << "Price is " << price - (itemList[i].GetDiscount() * quantity) << endl;
-                return;
+                int quantity;
+                double price;
+                found = true;
+                getInput("What quantity is required: ", quantity);
+                while (quantity <= 0)
+                {
+                    cout << RED << "Quantity must be greater than zero" << RESET << endl;
+                    getInput("What quantity is required: ", quantity);
+                }
+
+                price = itemList[i].GetPrice() * quantity;
+                if (again("Are they eligible for a discount (Y/N): "))
+                {
+                    runningTotal +=  price - (itemList[i].GetDiscount() * quantity);
+                    output += printer.cartItem(itemList[i].GetDescription(), quantity, itemList[i].GetPrice() - (itemList[i].GetDiscount()));
+                    break;
+                }
+                output += printer.cartItem(itemList[i].GetDescription(), quantity, itemList[i].GetPrice());
+                runningTotal += price;
+                break;
+
             }
-            cout << "Price is " << price << endl;
-            return;
+
         }
+        if(!found)
+            cout << RED << "Item not found." << RESET << endl;
 
-    }
+    } while (again("Do you wish to add another item to your cart? (Y/N) "));
 
-    cout << RED << "Item not found." << RESET << endl;
+    cout << output;
+    cout << GREEN << "The total order cost is " << fixed << setprecision(2) << runningTotal << RESET << endl;
 
 }
 

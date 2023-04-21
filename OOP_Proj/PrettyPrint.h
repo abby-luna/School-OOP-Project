@@ -19,7 +19,12 @@ private:
 public:
 	PrettyPrint(int cellsize);
 	string formatString(string str);
+
 	void initialize();
+	string initializeCart();
+
 	void nextLine(CItem i);
+	string cartItem(string name, int quantity, double price);
+
 };
 
